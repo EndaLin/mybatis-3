@@ -49,6 +49,8 @@ import org.apache.ibatis.util.MapUtil;
  * This class represents a cached set of class definition information that allows for easy mapping between property
  * names and getter/setter methods.
  *
+ * 作用：提供 Reflector 类来缓存类的字段名和 getter/setter 方法的元信息，使得反射时有更好的性能
+ *
  * @author Clinton Begin
  */
 public class Reflector {
@@ -66,14 +68,19 @@ public class Reflector {
   private final Map<String, String> caseInsensitivePropertyMap = new HashMap<>();
 
   public Reflector(Class<?> clazz) {
+    // 目标类
     type = clazz;
+    // 记录无参构造函数
     addDefaultConstructor(clazz);
     Method[] classMethods = getClassMethods(clazz);
     if (isRecord(type)) {
       addRecordGetMethods(classMethods);
     } else {
+      // 记录字段名与get方法、get方法返回值的映射关系
       addGetMethods(classMethods);
+      // 记录字段名与set方法、set方法参数的映射关系
       addSetMethods(classMethods);
+      // 针对没有getter/setter方法的字段，通过Filed对象的反射来设置和读取字段值
       addFields(clazz);
     }
     readablePropertyNames = getMethods.keySet().toArray(new String[0]);
@@ -98,7 +105,9 @@ public class Reflector {
   }
 
   private void addGetMethods(Method[] methods) {
+    // 字段名-get方法
     Map<String, List<Method>> conflictingGetters = new HashMap<>();
+    // 获取类的所有方法，及其实现接口的方法，并根据方法签名去重
     Arrays.stream(methods).filter(m -> m.getParameterTypes().length == 0 && PropertyNamer.isGetter(m.getName()))
         .forEach(m -> addMethodConflict(conflictingGetters, PropertyNamer.methodToProperty(m.getName()), m));
     resolveGetterConflicts(conflictingGetters);

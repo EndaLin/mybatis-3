@@ -65,9 +65,15 @@ public class XMLScriptBuilder extends BaseBuilder {
   public SqlSource parseScriptNode() {
     MixedSqlNode rootSqlNode = parseDynamicTags(context);
     SqlSource sqlSource;
+    // DynamicSqlSource：DynamicSqlSource是用于处理动态SQL语句的类。动态SQL语句是指根据不同的条件生成不同的SQL语句。
+    // DynamicSqlSource会在运行时根据传入的参数动态生成SQL语句，然后执行该SQL语句。
+    // 它使用MyBatis提供的动态SQL标签（如if、choose、foreach等）来构建动态SQL语句。
     if (isDynamic) {
       sqlSource = new DynamicSqlSource(configuration, rootSqlNode);
     } else {
+      // RawSqlSource：RawSqlSource是用于处理静态SQL语句的类。静态SQL语句是指不会根据条件变化的SQL语句。
+      // RawSqlSource会在初始化阶段就将SQL语句解析为静态的SQL语句，并生成对应的预编译的SQL语句。
+      // 在执行时，不会再对SQL语句进行修改或拼接，直接执行生成的预编译SQL语句。
       sqlSource = new RawSqlSource(configuration, rootSqlNode, parameterType);
     }
     return sqlSource;

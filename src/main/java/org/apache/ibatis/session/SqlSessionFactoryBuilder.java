@@ -76,6 +76,9 @@ public class SqlSessionFactoryBuilder {
 
   public SqlSessionFactory build(InputStream inputStream, String environment, Properties properties) {
     try {
+      // 用于解析mybatis-config.xml 文件
+      // 文件介绍可以参考：https://www.cnblogs.com/wuzhenzhao/p/11092526.html
+      // 主要了解四大核心核心对象的生命周期：SqlSessionFactoryBuilder、SqlSessionFactory、SqlSession、Mapper
       XMLConfigBuilder parser = new XMLConfigBuilder(inputStream, environment, properties);
       return build(parser.parse());
     } catch (Exception e) {

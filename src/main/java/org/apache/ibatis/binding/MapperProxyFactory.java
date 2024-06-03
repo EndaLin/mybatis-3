@@ -49,6 +49,9 @@ public class MapperProxyFactory<T> {
   }
 
   public T newInstance(SqlSession sqlSession) {
+    // 首先创建MapperProxy对象,MapperProxy对象实现了InvocationHandler接口,所以它可以被jdk动态代理
+    // 关于动态代理，可以看https://segmentfault.com/a/1190000040680716
+    // 通过动态代理，我们可以在调用接口方法的时候，实际上是调用了MapperProxy的invoke方法，以实现具体的sql操作
     final MapperProxy<T> mapperProxy = new MapperProxy<>(sqlSession, mapperInterface, methodCache);
     return newInstance(mapperProxy);
   }

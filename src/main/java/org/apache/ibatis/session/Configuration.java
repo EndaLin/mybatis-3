@@ -731,13 +731,17 @@ public class Configuration {
     if (ExecutorType.BATCH == executorType) {
       executor = new BatchExecutor(this, transaction);
     } else if (ExecutorType.REUSE == executorType) {
+      // 可复用的Executor
       executor = new ReuseExecutor(this, transaction);
     } else {
       executor = new SimpleExecutor(this, transaction);
     }
     if (cacheEnabled) {
+      // 缓存Executor
       executor = new CachingExecutor(executor);
     }
+
+    // 插件扩展，装饰者模式
     return (Executor) interceptorChain.pluginAll(executor);
   }
 
