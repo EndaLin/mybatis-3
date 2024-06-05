@@ -74,15 +74,20 @@ public class MapperMethod {
       }
       case SELECT:
         if (method.returnsVoid() && method.hasResultHandler()) {
+          // 返回void
           executeWithResultHandler(sqlSession, args);
           result = null;
         } else if (method.returnsMany()) {
+          // 返回集合
           result = executeForMany(sqlSession, args);
         } else if (method.returnsMap()) {
+          // 返回Map
           result = executeForMap(sqlSession, args);
         } else if (method.returnsCursor()) {
+          // 返回游标
           result = executeForCursor(sqlSession, args);
         } else {
+          // 返回单个对象
           Object param = method.convertArgsToSqlCommandParam(args);
           result = sqlSession.selectOne(command.getName(), param);
           if (method.returnsOptional() && (result == null || !method.getReturnType().equals(result.getClass()))) {
